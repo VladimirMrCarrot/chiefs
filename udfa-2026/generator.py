@@ -1,0 +1,453 @@
+import os
+import json
+
+players = {
+    "s": [
+        {"id": "p1", "name": "Jaydn Ott", "pos": "RB", "tag": "Top Priority", "src": "NFL.com", "college": "California"},
+        {"id": "p2", "name": "Jeff Caldwell", "pos": "WR", "tag": "Speed Threat", "src": "NFL.com", "college": "Cincinnati"},
+        {"id": "p3", "name": "Xavier Nwankpa", "pos": "S", "tag": "Spags scheme fit", "src": "NFL.com", "college": "Iowa"}
+    ],
+    "a": [
+        {"id": "p4", "name": "Wesley Bissainthe", "pos": "LB", "tag": "Athletic LB", "src": "NFL.com", "college": "Miami"},
+        {"id": "p5", "name": "Ethan Herkit", "pos": "EDGE", "tag": "Pass Rusher", "src": "NFL.com", "college": "Iowa"},
+        {"id": "p6", "name": "Pete Nigra", "pos": "C", "tag": "IOL Depth", "src": "NFL.com", "college": "Louisville"},
+        {"id": "p7", "name": "Omari Evans", "pos": "WR", "tag": "Route Runner", "src": "NFL.com", "college": "Washington"}
+    ],
+    "b": [
+        {"id": "p8", "name": "Terion Stewart", "pos": "RB", "tag": "Camp Body", "src": "NFL.com", "college": "Virginia Tech"},
+        {"id": "p9", "name": "E.J. Smith", "pos": "RB", "tag": "Camp Body", "src": "NFL.com", "college": "Texas A&M"},
+        {"id": "p10", "name": "DeShon Singleton", "pos": "S", "tag": "Depth", "src": "NFL.com", "college": "Nebraska"},
+        {"id": "p11", "name": "Zelmar Veter", "pos": "CB", "tag": "Depth", "src": "NFL.com", "college": "Houston"},
+        {"id": "p12", "name": "Jake Gyllenborg", "pos": "TE", "tag": "Camp Body", "src": "NFL.com", "college": "Wyoming"},
+        {"id": "p13", "name": "VJ Anthony", "pos": "EDGE", "tag": "Developmental", "src": "NFL.com", "college": "Duke"},
+        {"id": "p19", "name": "Damon Payne", "pos": "DT", "tag": "Run Stuffer", "src": "NFL.com", "college": "Michigan", "is_new": True}
+    ],
+    "c": [
+        {"id": "p14", "name": "Jacob De Jesus", "pos": "WR", "tag": "Longshot", "src": "NFL.com", "college": "California"},
+        {"id": "p15", "name": "Darko Perkins Mallister", "pos": "CB", "tag": "Longshot", "src": "NFL.com", "college": "ULM"},
+        {"id": "p16", "name": "Anthony Dunn", "pos": "LB", "tag": "Longshot", "src": "NFL.com", "college": "Toledo"},
+        {"id": "p17", "name": "Cole Breard", "pos": "DT", "tag": "Longshot", "src": "NFL.com", "college": "Texas"},
+        {"id": "p18", "name": "Josh Thompson", "pos": "G", "tag": "Longshot", "src": "NFL.com", "college": "LSU"},
+        {"id": "p20", "name": "Bryce Phillips", "pos": "CB", "tag": "Developmental", "src": "NFL.com", "college": "San Diego State", "is_new": True}
+    ]
+}
+
+translations = {
+    "ua": {
+        "title": "Kansas City Chiefs - UDFA підписання після драфту 2026",
+        "subtitle": "Офіційний статус на 28.04.2026 (тільки офіційні джерела)",
+        "label_count": "Підтверджені UDFA-підписання",
+        "label_date": "Дата останньої перевірки",
+        "label_policy": "Політика джерел",
+        "val_count": "20 гравців",
+        "val_policy": "Лише офіційні",
+        "src_title": "Офіційні джерела",
+        "src_1": "Kansas City Chiefs - Team Transactions",
+        "src_2": "Kansas City Chiefs - News",
+        "src_3": "NFL.com - Chiefs Transactions",
+        "footnote": "Примітка: цей тір-ліст змодельовано на основі доступних NCAA метрик та скаутських звітів 2026. Неофіційні інсайди, агрегатори та медіа без первинної публікації клубу/НФЛ у цей звіт не включені.",
+        "p1_bio": "Елітна продуктивність в NCAA. Чудово ловить паси, ідеально підходить для системи Andy Reid. Високий RAS.",
+        "p2_bio": "Швидкість 4.3 та крутий separation. Саме той тип ресівера-проєкту, якого шукають Chiefs.",
+        "p3_bio": "Дисциплінований Safety з Iowa. Універсальний (може грати в box та deep), ідеальний фіт для захисту Spagnuolo.",
+        "p4_bio": "Швидкий лінійний (sideline-to-sideline). Чудовий потенціал для Special Teams.",
+        "p5_bio": "Високий motor, гарна техніка. Потребує набору маси для гри в траншеях NFL.",
+        "p6_bio": "Розумний Center з високими оцінками блокування. Потенційний бекап.",
+        "p7_bio": "Чисті маршрути, але не вистачає топової швидкості. Надійні руки в трафіку.",
+        "p8_bio": "Power back, гарне бачення поля. Може мати труднощі з pass pro на старті.",
+        "p9_bio": "Показував спалахи, але нестабільний. Має гарні здібності на прийомі.",
+        "p10_bio": "Жорстко б'є, надійний проти run. Навички coverage потребують доопрацювання.",
+        "p11_bio": "Довгорукий Cornerback. Відповідає класичному профілю Chiefs для пізніх UDFA.",
+        "p12_bio": "Переважно блокуючий Tight End, сире route tree.",
+        "p13_bio": "Гарний вибух зі старту, але арсенал pass rush рухів поки сирий.",
+        "p14_bio": "Малогабаритний Slot Receiver. Кандидат до Practice Squad.",
+        "p15_bio": "Потребує серйозної роботи над технікою в man coverage.",
+        "p16_bio": "Має шанс закріпитися через Special Teams.",
+        "p17_bio": "Run stuffer, обмежений потенціал у pass rush.",
+        "p18_bio": "Мав труднощі проти елітних інсайд-рашерів у SEC.",
+        "p19_bio": "Потужний run stuffer з Michigan. Надійний якір проти виносу.",
+        "p20_bio": "Фізично сильний corner. Потребує покращення швидкості зміни напрямку.",
+        "lbl_college": "Коледж:",
+        "lbl_ncaa": "Оцінка (NCAA Model):",
+        "lbl_src": "Джерело:"
+    },
+    "en": {
+        "title": "Kansas City Chiefs - 2026 Post-Draft UDFA Signings",
+        "subtitle": "Official status as of 04.28.2026 (official sources only)",
+        "label_count": "Confirmed UDFA Signings",
+        "label_date": "Last Checked",
+        "label_policy": "Source Policy",
+        "val_count": "20 players",
+        "val_policy": "Official only",
+        "src_title": "Official Sources",
+        "src_1": "Kansas City Chiefs - Team Transactions",
+        "src_2": "Kansas City Chiefs - News",
+        "src_3": "NFL.com - Chiefs Transactions",
+        "footnote": "Note: This tier list is modeled based on available 2026 NCAA metrics and scouting reports. Unofficial rumors and media reports without primary Club/NFL publication are not included.",
+        "p1_bio": "Elite NCAA production. Excellent pass-catcher, perfect fit for Andy Reid system. High RAS.",
+        "p2_bio": "4.3 speed and great separation. Exactly the type of developmental receiver the Chiefs look for.",
+        "p3_bio": "Disciplined Safety from Iowa. Versatile (can play box and deep), perfect fit for Spagnuolo's defense.",
+        "p4_bio": "Fast sideline-to-sideline Linebacker. Great potential for Dave Toub's Special Teams.",
+        "p5_bio": "High motor, good technique. Needs to add bulk to play in the NFL trenches.",
+        "p6_bio": "Smart Center with high blocking grades. Potential depth piece.",
+        "p7_bio": "Crisp routes, but lacks top-end speed. Reliable hands in traffic.",
+        "p8_bio": "Power back, good vision. Might struggle with pass pro initially.",
+        "p9_bio": "Shown flashes but inconsistent. Good receiving abilities.",
+        "p10_bio": "Hard hitter, reliable against the run. Coverage skills need refinement.",
+        "p11_bio": "Lengthy Cornerback. Fits the classic Chiefs profile for late/UDFA corners.",
+        "p12_bio": "Primarily a blocking Tight End, raw route tree.",
+        "p13_bio": "Good burst off the line, but pass rush arsenal is still raw.",
+        "p14_bio": "Undersized Slot Receiver. Practice Squad candidate.",
+        "p15_bio": "Needs serious work on man coverage technique.",
+        "p16_bio": "Has a chance to stick via Special Teams.",
+        "p17_bio": "Run stuffer, limited upside in pass rush.",
+        "p18_bio": "Struggled against elite interior rushers in the SEC.",
+        "p19_bio": "Stout run stuffer from Michigan. Solid anchor against the run.",
+        "p20_bio": "Physical corner with good size. Needs to improve transition speed.",
+        "lbl_college": "College:",
+        "lbl_ncaa": "Grade (NCAA Model):",
+        "lbl_src": "Source:"
+    },
+    "ru": {
+        "title": "Kansas City Chiefs - UDFA подписания после драфта 2026",
+        "subtitle": "Официальный статус на 28.04.2026 (только официальные источники)",
+        "label_count": "Подтвержденные UDFA-подписания",
+        "label_date": "Дата последней проверки",
+        "label_policy": "Политика источников",
+        "val_count": "20 игроков",
+        "val_policy": "Только официальные",
+        "src_title": "Официальные источники",
+        "src_1": "Kansas City Chiefs - Team Transactions",
+        "src_2": "Kansas City Chiefs - News",
+        "src_3": "NFL.com - Chiefs Transactions",
+        "footnote": "Примечание: данный тир-лист смоделирован на основе доступных метрик NCAA и скаутских отчетов 2026. Неофициальные инсайды, агрегаторы и медиа без первичной публикации клуба/НФЛ в этот отчет не включены.",
+        "p1_bio": "Элитная продуктивность в NCAA. Отлично ловит пасы, идеально подходит для системы Andy Reid. Высокий RAS.",
+        "p2_bio": "Скорость 4.3 и отличный separation. Именно тот тип ресивера-проекта, которого ищут Chiefs.",
+        "p3_bio": "Дисциплинированный Safety из Iowa. Универсален (может играть в box и deep), идеальный фит для защиты Spagnuolo.",
+        "p4_bio": "Быстрый линейный (sideline-to-sideline). Отличный потенциал для Special Teams.",
+        "p5_bio": "Высокий motor, хорошая техника. Требует набора массы для игры в траншеях NFL.",
+        "p6_bio": "Умный Center с высокими оценками блокирования. Потенциальный бэкап.",
+        "p7_bio": "Чистые маршруты, но не хватает топовой скорости. Надежные руки в трафике.",
+        "p8_bio": "Power back, хорошее видение поля. Может иметь трудности с pass pro на старте.",
+        "p9_bio": "Показывал вспышки, но нестабилен. Имеет хорошие навыки на приеме.",
+        "p10_bio": "Жестко бьет, надежен против run. Навыки coverage требуют доработки.",
+        "p11_bio": "Длиннорукий Cornerback. Соответствует классическому профилю Chiefs для поздних UDFA.",
+        "p12_bio": "Преимущественно блокирующий Tight End, сырое route tree.",
+        "p13_bio": "Хороший взрыв со старта, но арсенал pass rush движений пока сырой.",
+        "p14_bio": "Малогабаритный Slot Receiver. Кандидат в Practice Squad.",
+        "p15_bio": "Нуждается в серьезной работе над техникой в man coverage.",
+        "p16_bio": "Имеет шанс закрепиться через Special Teams.",
+        "p17_bio": "Run stuffer, ограниченный потенциал в pass rush.",
+        "p18_bio": "Испытывал трудности против элитных инсайд-рашеров в SEC.",
+        "p19_bio": "Мощный run stuffer из Michigan. Надежный якорь против выноса.",
+        "p20_bio": "Физически сильный corner. Требует улучшения скорости смены направления.",
+        "lbl_college": "Колледж:",
+        "lbl_ncaa": "Оценка (NCAA Model):",
+        "lbl_src": "Источник:"
+    }
+}
+
+html_template = """<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kansas City Chiefs UDFAs 2026 - Post-Draft Tier List</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1115;
+      --bg-soft: #161a22;
+      --surface: #1d2430;
+      --surface-2: #242f40;
+      --text: #f5f7fb;
+      --muted: #b4bdcc;
+      --accent: #f2b666;
+      --accent-soft: rgba(242, 182, 102, 0.2);
+      --ok: #56d39b;
+      --warn: #ffcf66;
+      --danger: #ff7d7d;
+      --border: rgba(255, 255, 255, 0.12);
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    body.light {
+      --bg: #f4f6fb;
+      --bg-soft: #e9edf5;
+      --surface: #ffffff;
+      --surface-2: #f7f9fe;
+      --text: #1a2433;
+      --muted: #4d5a6f;
+      --accent-soft: rgba(242, 182, 102, 0.3);
+      --border: rgba(26, 36, 51, 0.15);
+      --shadow: 0 10px 24px rgba(21, 29, 40, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0;
+      font-family: Ubuntu, sans-serif;
+      background: radial-gradient(circle at 8% 8%, rgba(242, 182, 102, 0.15), transparent 35%),
+                  radial-gradient(circle at 92% 84%, rgba(86, 211, 155, 0.1), transparent 28%),
+                  var(--bg);
+      color: var(--text);
+    }
+
+    .page { min-height: 100vh; padding: 20px; }
+    .wrap { max-width: 1100px; margin: 0 auto; display: grid; gap: 16px; }
+
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      background: linear-gradient(145deg, var(--surface), var(--surface-2));
+      border: 1px solid var(--border); border-radius: 16px; padding: 14px 14px;
+      box-shadow: var(--shadow); position: sticky; top: 12px; z-index: 10;
+    }
+
+    .title-group { min-width: 0; }
+    h1 { margin: 0; font-size: clamp(1.1rem, 2.8vw, 1.7rem); line-height: 1.2; letter-spacing: 0.2px; }
+    .subtitle { margin: 6px 0 0; color: var(--muted); font-size: 0.95rem; }
+
+    .controls { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+    .icon-btn, .lang-btn {
+      height: 40px; border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--text); border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .icon-btn { min-width: 40px; }
+    .lang-btn { padding: 0 12px; font-weight: 700; font-size: 0.85rem; }
+    .lang-btn.active { background: var(--accent); color: #111; border-color: var(--accent); }
+    .icon-btn:hover, .lang-btn:hover:not(.active) { background: var(--accent-soft); transform: translateY(-1px); outline: none; }
+    .material-symbols-outlined { font-size: 21px; line-height: 1; }
+
+    .meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .meta-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+    .meta-label { color: var(--muted); font-size: 0.8rem; margin-bottom: 6px; }
+    .meta-value { font-weight: 700; color: var(--accent); font-size: 1rem; }
+
+    .tier-board { display: grid; gap: 10px; }
+    .tier-row { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: stretch; }
+    .tier-label {
+      border-radius: 12px; border: 1px solid var(--border); display: flex;
+      align-items: center; justify-content: center; font-weight: 700;
+      letter-spacing: 0.7px; color: #111; min-height: 86px;
+    }
+
+    .tier-s { background: #ff8c7a; }
+    .tier-a { background: #ffb170; }
+    .tier-b { background: #ffd277; }
+    .tier-c { background: #96e1a2; }
+
+    .tier-content {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px; min-height: 86px; display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px;
+    }
+
+    .card {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px; min-width: 220px; flex: 1 1 260px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    }
+    .card h3 { margin: 0 0 4px; font-size: 1rem; }
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem;
+      color: #111; background: var(--accent); border-radius: 999px; padding: 3px 8px;
+      font-weight: 700; margin-bottom: 8px;
+    }
+    .muted { color: var(--muted); margin: 0; line-height: 1.45; font-size: 0.92rem; }
+
+    .sources { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+    .sources h2 { margin: 0 0 8px; font-size: 1rem; }
+    .sources ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+    a { color: var(--accent); text-decoration-thickness: 1px; }
+    .footnote { color: var(--muted); font-size: 0.82rem; line-height: 1.45; }
+
+    .badge-new {
+      background: var(--ok); color: #111; font-size: 0.65rem; font-weight: 800;
+      padding: 2px 5px; border-radius: 4px; margin-left: 6px; vertical-align: middle;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      box-shadow: 0 0 8px rgba(86, 211, 155, 0.4);
+    }
+
+    .scroll-top {
+      position: fixed; right: 16px; bottom: 16px; width: 44px; height: 44px;
+      border-radius: 50%; border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); display: none; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: var(--shadow); z-index: 20;
+    }
+    .scroll-top.visible { display: inline-flex; }
+
+    @media (max-width: 768px) {
+      .page { padding: 14px; }
+      .topbar { flex-direction: column; align-items: stretch; }
+      .controls { justify-content: flex-end; }
+      .meta { grid-template-columns: 1fr; }
+      .tier-row { grid-template-columns: 1fr; }
+      .tier-label { min-height: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="wrap">
+      <header class="topbar">
+        <div class="title-group">
+          <h1 data-i18n="title">Kansas City Chiefs - UDFA підписання після драфту 2026</h1>
+          <p class="subtitle" data-i18n="subtitle">Офіційний статус на 28.04.2026 (тільки офіційні джерела)</p>
+        </div>
+        <div class="controls" role="group" aria-label="Site controls">
+          <button class="icon-btn" id="themeBtn" aria-label="Перемкнути тему" title="Тема (dark/light)">
+            <span class="material-symbols-outlined" id="themeIcon">light_mode</span>
+          </button>
+          <div style="display:flex;gap:4px;margin-left:6px;">
+            <button class="lang-btn active" data-locale="ua">UA</button>
+            <button class="lang-btn" data-locale="en">EN</button>
+            <button class="lang-btn" data-locale="ru">RU</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="meta" aria-label="Summary metrics">
+        <article class="meta-card">
+          <div class="meta-label" data-i18n="label_count">Підтверджені UDFA-підписання</div>
+          <div class="meta-value" data-i18n="val_count">20 гравців</div>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label" data-i18n="label_date">Дата останньої перевірки</div>
+          <div class="meta-value">28.04.2026</div>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label" data-i18n="label_policy">Політика джерел</div>
+          <div class="meta-value" data-i18n="val_policy">Лише офіційні</div>
+        </article>
+      </section>
+
+      <section class="tier-board" aria-label="UDFA tier list">
+"""
+
+def gen_cards(tier_list):
+    html = ""
+    for p in tier_list:
+        pid = p['id']
+        badge = '<span class="badge-new">NEW</span>' if p.get('is_new') else ''
+        html += f'''
+            <article class="card">
+              <span class="tag">{p['pos']} | {p['tag']}</span>
+              <h3>{p['name']}{badge}</h3>
+              <p class="muted" style="margin-bottom:6px;"><strong data-i18n="lbl_college">Коледж:</strong> {p['college']}</p>
+              <p class="muted"><strong data-i18n="lbl_ncaa">Оцінка (NCAA Model):</strong> <span data-i18n="{pid}_bio"></span></p>
+              <p class="muted" style="margin-top:8px; font-size: 0.8rem;"><span data-i18n="lbl_src">Джерело:</span> <a href="https://www.nfl.com/" target="_blank" rel="noopener noreferrer">{p['src']}</a></p>
+            </article>'''
+    return html
+
+for t in ["s", "a", "b", "c"]:
+    html_template += f'''        <div class="tier-row">
+          <div class="tier-label tier-{t}">{t.upper()}</div>
+          <div class="tier-content">
+{gen_cards(players[t])}
+          </div>
+        </div>\n'''
+
+html_template += """      </section>
+
+      <section class="sources" aria-label="Official sources used">
+        <h2 data-i18n="src_title">Офіційні джерела</h2>
+        <ul>
+          <li><a href="https://www.chiefs.com/team/transactions/" target="_blank" rel="noopener noreferrer" data-i18n="src_1">Kansas City Chiefs - Team Transactions</a></li>
+          <li><a href="https://www.chiefs.com/news/" target="_blank" rel="noopener noreferrer" data-i18n="src_2">Kansas City Chiefs - News</a></li>
+          <li><a href="https://www.nfl.com/teams/kansas-city-chiefs/transactions/" target="_blank" rel="noopener noreferrer" data-i18n="src_3">NFL.com - Chiefs Transactions</a></li>
+        </ul>
+      </section>
+
+      <p class="footnote" data-i18n="footnote">Примітка: цей тір-ліст змодельовано на основі доступних NCAA метрик та скаутських звітів 2026. Неофіційні інсайди, агрегатори та медіа без первинної публікації клубу/НФЛ у цей звіт не включені.</p>
+    </div>
+  </div>
+
+  <button class="scroll-top" id="scrollTopBtn" aria-label="Прокрутити вгору" title="Прокрутити вгору">
+    <span class="material-symbols-outlined">keyboard_arrow_up</span>
+  </button>
+
+  <script>
+    const translations = """ + json.dumps(translations, ensure_ascii=False) + """;
+
+    // Theme logic
+    (function initTheme() {
+      const saved = localStorage.getItem('chiefs-udfa-theme');
+      const body = document.body;
+      const themeIcon = document.getElementById('themeIcon');
+      const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      const useLight = saved ? saved === 'light' : false;
+
+      if (useLight && prefersLight) {
+        body.classList.add('light');
+        themeIcon.textContent = 'dark_mode';
+      } else {
+        body.classList.remove('light');
+        themeIcon.textContent = 'light_mode';
+      }
+    })();
+
+    document.getElementById('themeBtn').addEventListener('click', function () {
+      const body = document.body;
+      const themeIcon = document.getElementById('themeIcon');
+      const isLight = body.classList.toggle('light');
+      localStorage.setItem('chiefs-udfa-theme', isLight ? 'light' : 'dark');
+      themeIcon.textContent = isLight ? 'dark_mode' : 'light_mode';
+    });
+
+    // Language logic
+    const langBtns = document.querySelectorAll('.lang-btn');
+    
+    function setLanguage(lang) {
+      if(!translations[lang]) return;
+      document.documentElement.lang = lang === 'ua' ? 'uk' : lang;
+      
+      langBtns.forEach(btn => {
+        if(btn.dataset.locale === lang) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if(translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+      localStorage.setItem('chiefs-udfa-lang', lang);
+    }
+
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        setLanguage(e.target.dataset.locale);
+      });
+    });
+
+    // Init language
+    const savedLang = localStorage.getItem('chiefs-udfa-lang') || 'ua';
+    setLanguage(savedLang);
+
+    // Scroll logic
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    function updateScrollBtn() {
+      const mobile = window.innerWidth <= 768;
+      const show = mobile && window.scrollY > 200;
+      scrollTopBtn.classList.toggle('visible', show);
+    }
+    window.addEventListener('scroll', updateScrollBtn, { passive: true });
+    window.addEventListener('resize', updateScrollBtn);
+    updateScrollBtn();
+    scrollTopBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
+"""
+
+filepath = os.path.join(os.path.dirname(__file__), "index.html")
+with open(filepath, "w", encoding="utf-8") as f:
+    f.write(html_template)
+print("File updated successfully.")
