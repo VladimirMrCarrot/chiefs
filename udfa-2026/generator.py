@@ -156,6 +156,7 @@ html_template = """<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
       --bg: #0f1115;
@@ -371,6 +372,12 @@ html_template += """      </section>
   </button>
 
   <script>
+    // Ініціалізація Telegram Web App (щоб не закривалось на ПК)
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand(); // розгортає на весь екран
+    }
+
     const translations = """ + json.dumps(translations, ensure_ascii=False) + """;
 
     // Theme logic
