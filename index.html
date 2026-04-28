@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mrcarrot13666 — chiefs tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#e31837; /* Chiefs Red */
+  --brand-dim:rgba(227, 24, 55, 0.12);
+  --brand-glow:rgba(227, 24, 55, 0.22);
+  --font:'Ubuntu',sans-serif;
+  --mono:'Space Mono',monospace;
+}
+
+/* ── DARK THEME (default) ── */
+[data-theme="dark"]{
+  --bg:#0d0d0d;
+  --surface:#141414;
+  --surface2:#1c1c1c;
+  --border:#222;
+  --border2:#2e2e2e;
+  --text:#e8e8e8;
+  --text-muted:#555;
+  --faint:#1e1e1e;
+  --green:#22c55e;--green-dim:rgba(34,197,94,0.1);
+  --yellow:#ffb81c;--yellow-dim:rgba(255,184,28,0.1); /* Chiefs Gold */
+  --red:#e31837;--red-dim:rgba(227,24,55,0.1);
+}
+
+/* ── LIGHT THEME ── */
+[data-theme="light"]{
+  --bg:#f5f4f0;
+  --surface:#ffffff;
+  --surface2:#efefeb;
+  --border:#e0deda;
+  --border2:#d0ceca;
+  --text:#1a1917;
+  --text-muted:#888;
+  --faint:#f0eeea;
+  --green:#16a34a;--green-dim:rgba(22,163,74,0.08);
+  --yellow:#ca8a04;--yellow-dim:rgba(202,138,4,0.08);
+  --red:#dc2626;--red-dim:rgba(220,38,38,0.08);
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100dvh;
+  overflow-x:hidden;
+  transition:background 250ms,color 250ms;
+}
+
+/* grain overlay */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:999;
+}
+
+/* ── UI CONTROLS ── */
+.controls-container {
+  position:fixed;top:16px;right:16px;z-index:200;
+  display:flex;align-items:center;gap:8px;
+}
+.theme-btn{
+  width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--border2);
+  background:var(--surface);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);font-size:16px;
+  transition:all 200ms;box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+.theme-btn:hover{color:var(--brand);border-color:var(--brand);}
+
+.lang-group {
+  display:flex;gap:4px;
+}
+.lang-btn {
+  height:38px;padding:0 12px;border-radius:18px;
+  border:1px solid var(--border2);
+  background:var(--surface);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);font-size:12px;font-family:var(--mono);font-weight:700;
+  transition:all 200ms;box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+.lang-btn.active {
+  background:var(--brand);color:#fff;border-color:var(--brand);
+}
+.lang-btn:hover:not(.active){color:var(--brand);border-color:var(--brand);}
+
+
+/* ── HERO ── */
+.hero{
+  position:relative;
+  min-height:70dvh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:60px 24px 48px;
+  overflow:hidden;
+  text-align:center;
+  isolation:isolate;
+}
+.hero::after{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at center, transparent 35%, color-mix(in srgb, var(--bg) 78%, transparent) 100%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--bg) 92%, transparent), color-mix(in srgb, var(--bg) 70%, transparent));
+  z-index:1;
+  pointer-events:none;
+}
+.hero-glow{
+  position:absolute;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,var(--brand-dim) 0%,transparent 70%);
+  top:40%;left:50%;transform:translate(-50%,-50%);
+  z-index:2;
+  pointer-events:none;
+}
+
+.hero-tag{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--yellow);
+  margin-bottom:10px;position:relative;z-index:5;
+}
+.hero-title{
+  font-family:var(--mono);
+  font-size:clamp(24px,5.5vw,52px);
+  font-weight:700;letter-spacing:-0.02em;line-height:1;
+  position:relative;z-index:5;margin-bottom:6px;
+}
+.hero-title em{color:var(--brand);font-style:normal;}
+.hero-sub{
+  font-family:var(--mono);font-size:12px;
+  color:var(--text-muted);letter-spacing:0.08em;
+  position:relative;z-index:5;margin-bottom:44px;
+}
+.scroll-hint{
+  position:relative;z-index:5;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  color:var(--text-muted);font-size:11px;font-family:var(--mono);
+  animation:bob 2.2s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{opacity:0.35;transform:translateY(0)}50%{opacity:0.8;transform:translateY(5px)}}
+
+/* ── MAIN ── */
+.main{max-width:760px;margin:0 auto;padding:0 20px 72px;}
+
+.sec-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--text-muted);
+  margin-bottom:14px;padding-top:20px;
+  display:flex;align-items:center;gap:10px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── GRID ── */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));
+  gap:10px;
+}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:20px 22px;
+  text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;gap:12px;
+  transition:border-color 200ms,transform 200ms,box-shadow 200ms;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(135deg,var(--cc-bg,transparent) 0%,transparent 55%);
+  opacity:0;transition:opacity 200ms;pointer-events:none;
+}
+.card:hover{transform:translateY(-2px);border-color:var(--cc,var(--brand));box-shadow:0 0 18px var(--cc-glow,var(--brand-glow));}
+.card:hover::before{opacity:1;}
+
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.card-icon{
+  width:42px;height:42px;border-radius:10px;
+  background:var(--faint);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.card-arr{font-size:16px;color:var(--text-muted);transition:transform 200ms,color 200ms;margin-top:1px;}
+.card:hover .card-arr{transform:translate(2px,-2px);color:var(--cc,var(--brand));}
+
+.card-title{font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.card-desc{font-size:13px;color:var(--text-muted);line-height:1.55;}
+.card-url{
+  font-family:var(--mono);font-size:10.5px;color:var(--text-muted);
+  background:var(--faint);border:1px solid var(--border);
+  border-radius:5px;padding:4px 9px;display:inline-block;word-break:break-all;
+}
+
+/* dot + badge */
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.dot-live{background:var(--green);box-shadow:0 0 5px var(--green);}
+.dot-soon{background:var(--text-muted);}
+
+.badge{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:0.06em;padding:2px 7px;border-radius:20px;
+  display:inline-flex;align-items:center;gap:4px;
+}
+.badge-live{background:var(--green-dim);color:var(--green);}
+.badge-soon{background:var(--faint);color:var(--text-muted);}
+.badge-brand{background:var(--brand-dim);color:var(--brand);}
+
+/* card variants */
+.cc-green{--cc:var(--green);--cc-glow:rgba(34,197,94,0.18);--cc-bg:rgba(34,197,94,0.04);}
+.cc-yellow{--cc:var(--yellow);--cc-glow:rgba(255,184,28,0.15);--cc-bg:rgba(255,184,28,0.04);}
+.cc-red{--cc:var(--red);--cc-glow:rgba(227,24,55,0.18);--cc-bg:rgba(227,24,55,0.04);}
+
+/* disabled */
+.card-disabled{opacity:0.3;pointer-events:none;}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);
+  padding:20px 20px 36px;
+  max-width:760px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;
+}
+.ft{font-family:var(--mono);font-size:10px;color:var(--text-muted);letter-spacing:0.08em;}
+.ft-dot{color:var(--brand);}
+
+/* ── MOBILE ── */
+@media(max-width:480px){
+  .hero-title{font-size:28px;}
+  .main,footer{padding-left:14px;padding-right:14px;}
+  .card{padding:16px 18px;}
+}
+</style>
+</head>
+<body>
+
+<div class="controls-container">
+  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">☀️</button>
+  <div class="lang-group">
+    <button class="lang-btn active" data-locale="ua">UA</button>
+    <button class="lang-btn" data-locale="en">EN</button>
+    <button class="lang-btn" data-locale="ru">RU</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-tag" data-i18n="hero_tag">kc chiefs · fan community tools</div>
+  <h1 class="hero-title">CHIEFS<em>TOOLS</em></h1>
+  <div class="hero-sub" data-i18n="hero_sub">// mrcarrot13666 індекс</div>
+  <div class="scroll-hint">
+    <span data-i18n="scroll">scroll</span>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="sec-label" data-i18n="sec_dash">дашборди</div>
+
+  <div class="grid">
+
+    <a class="card cc-red" href="/udfa-2026/" rel="noopener">
+      <div class="card-top">
+        <div class="card-icon">🏈</div>
+        <span class="card-arr">↗</span>
+      </div>
+      <div>
+        <div class="card-title">
+          <span class="dot dot-live"></span>
+          UDFA 2026 Tier List
+          <span class="badge badge-live">NEW</span>
+        </div>
+        <div class="card-desc" data-i18n="udfa_desc">Аналітичний борд для відстеження постдрафтових підписань Kansas City Chiefs.</div>
+      </div>
+      <div class="card-url">chiefs.mrcarrot13666.me/udfa-2026/</div>
+    </a>
+
+    <div class="card card-disabled">
+      <div class="card-top">
+        <div class="card-icon">➕</div>
+      </div>
+      <div>
+        <div class="card-title">
+          <span class="dot dot-soon"></span>
+          Roster Projection
+          <span class="badge badge-soon">SOON</span>
+        </div>
+        <div class="card-desc" data-i18n="roster_desc">Прогноз складу команди на 53 гравці (у розробці).</div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  <div class="ft"><span class="ft-dot">●</span> mrcarrot13666</div>
+  <div class="ft">chiefs.mrcarrot13666.me</div>
+</footer>
+
+<script>
+  const translations = {
+    ua: {
+      hero_tag: "kc chiefs · fan community tools",
+      hero_sub: "// mrcarrot13666 індекс",
+      scroll: "scroll",
+      sec_dash: "дашборди",
+      udfa_desc: "Аналітичний борд для відстеження постдрафтових підписань Kansas City Chiefs.",
+      roster_desc: "Прогноз складу команди на 53 гравці (у розробці)."
+    },
+    en: {
+      hero_tag: "kc chiefs · fan community tools",
+      hero_sub: "// mrcarrot13666 index",
+      scroll: "scroll",
+      sec_dash: "dashboards",
+      udfa_desc: "Analytical board for tracking Kansas City Chiefs post-draft signings.",
+      roster_desc: "53-man roster projection (in development)."
+    },
+    ru: {
+      hero_tag: "kc chiefs · fan community tools",
+      hero_sub: "// mrcarrot13666 индекс",
+      scroll: "scroll",
+      sec_dash: "дашборды",
+      udfa_desc: "Аналитический борд для отслеживания постдрафтовых подписаний Kansas City Chiefs.",
+      roster_desc: "Прогноз состава команды на 53 игрока (в разработке)."
+    }
+  };
+
+  // Theme Logic
+  let dark = true;
+  function toggleTheme(){
+    dark = !dark;
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    document.getElementById('theme-btn').textContent = dark ? '☀️' : '🌙';
+  }
+
+  // Language Logic
+  const langBtns = document.querySelectorAll('.lang-btn');
+  function setLanguage(lang) {
+    if(!translations[lang]) return;
+    document.documentElement.lang = lang === 'ua' ? 'uk' : lang;
+    
+    langBtns.forEach(btn => {
+      if(btn.dataset.locale === lang) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if(translations[lang][key]) {
+        el.textContent = translations[lang][key];
+      }
+    });
+    localStorage.setItem('chiefs-root-lang', lang);
+  }
+
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      setLanguage(e.target.dataset.locale);
+    });
+  });
+
+  // Init language
+  const savedLang = localStorage.getItem('chiefs-root-lang') || 'ua';
+  setLanguage(savedLang);
+</script>
+</body>
+</html>
